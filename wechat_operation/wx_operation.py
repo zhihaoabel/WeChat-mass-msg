@@ -43,10 +43,10 @@ class WxOperation:
     """
 
     def __init__(self):
-        auto.SendKeys(text='{Alt}{Ctrl}z')  # 快捷键唤醒微信
+        auto.SendKeys(text='{Alt}{Ctrl}w')  # 快捷键唤醒微信
         self.wx_window = auto.WindowControl(Name='微信', ClassName='WeChatMainWndForPC')
         assert self.wx_window.Exists(), "窗口不存在"
-        self.input_edit = self.wx_window.EditControl(Name='输入')
+        self.input_edit = self.wx_window.EditControl(LocalizedControlType='edit')
         self.search_edit = self.wx_window.EditControl(Name='搜索')
 
     def __goto_chat_box(self, name: str) -> None:
@@ -204,7 +204,8 @@ class WxOperation:
                     chat_records.append(
                         {'type': 'Other', 'name': ''.join(msg.split(' ')[:-1]), 'msg': msg.split(' ')[-1]})
                     continue
-                if msg in ['发出红包，请在手机上查看', '收到红包，请在手机上查看', '你发送了一次转账收款提醒，请在手机上查看', '你收到了一次转账收款提醒，请在手机上查看']:
+                if msg in ['发出红包，请在手机上查看', '收到红包，请在手机上查看',
+                           '你发送了一次转账收款提醒，请在手机上查看', '你收到了一次转账收款提醒，请在手机上查看']:
                     chat_records.append({'type': 'RedEnvelope', 'name': 'System', 'msg': msg})
                     continue
                 if '领取了你的红包' in msg:
@@ -255,13 +256,47 @@ class WxOperation:
         assert not isinstance(msgs, str), "文本必须为可迭代且非字符串类型"
         assert not isinstance(file_paths, str), "文件路径必须为可迭代且非字符串类型"
         for name in names:
-            self.__goto_chat_box(name=name)
+            self.__goto_chat_box(name=name[0])
             if msgs:
                 if add_remark_name:
                     new_msgs = deepcopy(msgs)
-                    new_msgs.insert(0, name)
+                    new_msgs.insert(0, name[0])
                     self.__send_text(*new_msgs)
                 else:
                     self.__send_text(*msgs)
             if file_paths:
                 self.__send_file(*file_paths)
+
+    def send_msg_without_gui(self, msg_dict, file_paths, add_remark_name=False) -> None:
+        """
+        发送消息，可同时发送文本和文件（至少选一项）, 不带GUI。可针对不同群群发不同消息
+
+        Args:
+            msg_dict (dict): 必选参数，key为商户号，value为消息列表
+            file_paths (Iterable):可选参数，发送的文件路径
+            add_remark_name(bool): 可选参数，是否添加备注名称发送
+
+        Returns:
+            None
+        """
+        assert msg_dict, "商户号为空"
+        assert not isinstance(file_paths, str), "文件路径必须为可迭代且非字符串类型"
+
+        for merchant_id in msg_dict:
+            self.__goto_chat_box(name=merchant_id)
+            msgs = msg_dict[merchant_id]
+            assert any([msgs, file_paths]), "针对商户号为 {} 的商户待发送任何消息为空"
+            if msgs:
+                if add_remark_name:
+                    new_msgs = deepcopy(msgs)
+                    new_msgs.insert(0, merchant_id)
+                    self.__send_text(*new_msgs)
+                else:
+                    self.__send_text(*msgs)
+            if file_paths:
+                self.__send_file(*file_paths)
+
+
+# wx = WxOperation()
+# wx.send_msg(['文件传输助手'], msgs=['群发测试'], file_paths=[], add_remark_name=False)
+# wx.send_msg_without_gui({'文件传输助手': ['群发测试1', '群发测试2']}, file_paths=[], add_remark_name=False)
