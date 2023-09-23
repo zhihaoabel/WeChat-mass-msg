@@ -84,7 +84,7 @@ class WxOperation:
             # self.input_edit.SendKeys(text=msg, waitTime=0.1) # 一个个字符插入,不建议使用该方法
             # 设置到剪切板再黏贴到输入框
             auto.SetClipboardText(text=msg)
-            self.input_edit.SendKeys(text='{Ctrl}v', waitTime=0.1)
+            self.input_edit.SendKeys(text='{Ctrl}v', waitTime=0.2)
             self.wx_window.SendKey(key=auto.SpecialKeyNames['ENTER'], waitTime=0.2)
 
     def __send_file(self, *file_paths) -> None:
