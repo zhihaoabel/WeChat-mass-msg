@@ -115,8 +115,8 @@ CompanyAddress:309 Winston House 2 Dollis Park, London, England, N3 1HF
 (this is not a returning address)
 
 网修：
-1.请修改terms和contact下的主体为 Kristal F.l. Societa'a Responsabilita' Limitata Semplificata主体  
-2.T&C - Governing Law 适用法律国家修改为IT
+1.请修改terms和contact下的主体为Mexong Ltd主体  
+2.T&C - Governing Law 适用法律国家修改为UK
 
 如果网站不再使用，需要报备关停哦。
                     """,
@@ -153,8 +153,8 @@ Company Address: Milano (Ml) Via Tonale 12 CAP 20125
 (this is not a returning address)
 
 网修：
-1.请修改terms和contact下的主体为Mexong Ltd主体  
-2.T&C - Governing Law 适用法律国家修改为UK
+1.请修改terms和contact下的主体为 Kristal F.l. Societa'a Responsabilita' Limitata Semplificata主体  
+2.T&C - Governing Law 适用法律国家修改为IT
 
 如果网站不再使用，需要报备关停哦。
                     """
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     # wx.send_msg_without_gui(reduced_merchant_data, file_paths=[], add_remark_name=False)
 
     # 通知更新主体
-    csv_operation = CsvOperation("C:\\Users\\1\\Desktop", '新主体通知 - Copy.csv')
+    csv_operation = CsvOperation("C:\\Users\\ccirc\\Desktop", '新主体通知 - 副本.csv')
     count, merchant_data = csv_operation.update_entity()
     reduced_merchant_data = CsvOperation.reduced_merchant_site_dict(merchant_data)
     print(f"一共处理了{count}记录")

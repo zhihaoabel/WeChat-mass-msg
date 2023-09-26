@@ -49,7 +49,7 @@ class WxOperation:
         self.input_edit = self.wx_window.EditControl(LocalizedControlType='edit')
         self.search_edit = self.wx_window.EditControl(Name='搜索')
 
-    def __goto_chat_box(self, name: str) -> None:
+    def __goto_chat_box(self, name: str) -> bool:
         """
         跳转到指定 name好友的聊天窗口。
 
@@ -314,7 +314,7 @@ class WxOperation:
         return self.wx_window.ButtonControl(Name='表情')
 
 
-wx = WxOperation()
+# wx = WxOperation()
 # wx.send_msg(['文件传输助手'], msgs=['群发测试'], file_paths=[], add_remark_name=False)
-wx.send_msg_without_gui({'文件传输助手': ['[囧] [汗]']}, file_paths=[],
-                        add_remark_name=False)
+# wx.send_msg_without_gui({'文件传输助手': ['[囧] [汗]']}, file_paths=[],
+#                         add_remark_name=False)
