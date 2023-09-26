@@ -65,7 +65,13 @@ class WxOperation:
         self.wx_window.SendKey(key=auto.SpecialKeyNames['DELETE'])
         auto.SetClipboardText(text=name)
         self.wx_window.SendKeys(text='{Ctrl}v', waitTime=0.1)
+        group = self.wx_window.ListControl(Name="@str:IDS_FAV_SEARCH_RESULT:3780").ListItemControl(
+            LocalizedControlType="列表项目")
+        if group.Name.startswith('搜索'):
+            return False
+
         self.wx_window.SendKey(key=auto.SpecialKeyNames['ENTER'], waitTime=0.2)
+        return True
 
     def __send_text(self, *msgs) -> None:
         """
@@ -282,8 +288,14 @@ class WxOperation:
         assert msg_dict, "商户号为空"
         assert not isinstance(file_paths, str), "文件路径必须为可迭代且非字符串类型"
 
+        not_found = []
+
         for merchant_id in msg_dict:
-            self.__goto_chat_box(name=merchant_id)
+            success = self.__goto_chat_box(name=merchant_id)
+            if not success:
+                print(f"商户号{merchant_id}没有找到")
+                not_found.append(merchant_id)
+                continue
             msgs = msg_dict[merchant_id]
             assert any([msgs, file_paths]), "针对商户号为 {} 的商户待发送任何消息为空"
             if msgs:
@@ -295,8 +307,14 @@ class WxOperation:
                     self.__send_text(*msgs)
             if file_paths:
                 self.__send_file(*file_paths)
+        print(f"未找到的商户号有：{not_found}")
+
+    def get_emoji_button(self) -> auto.ButtonControl:
+        """获取表情按钮"""
+        return self.wx_window.ButtonControl(Name='表情')
 
 
-# wx = WxOperation()
+wx = WxOperation()
 # wx.send_msg(['文件传输助手'], msgs=['群发测试'], file_paths=[], add_remark_name=False)
-# wx.send_msg_without_gui({'文件传输助手': ['群发测试1', '群发测试2']}, file_paths=[], add_remark_name=False)
+wx.send_msg_without_gui({'文件传输助手': ['[囧] [汗]']}, file_paths=[],
+                        add_remark_name=False)
